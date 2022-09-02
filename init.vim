@@ -15,6 +15,9 @@ Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'aserowy/tmux.nvim'
+Plug 'tveskag/nvim-blame-line'
+
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 
 call plug#end()
 
@@ -32,6 +35,8 @@ nnoremap <leader>v :CHADopen<CR>
 nnoremap <leader>d <Plug>(coc-definition)
 nnoremap <leader>D <Plug>(coc-type-definition)
 nnoremap <leader>rn <Plug>(coc-rename)
+nnoremap <leader>rr <Plug>(coc-references)
+nnoremap <leader>bl :ToggleBlameLine<CR>
 set guifont=FiraCode\ NF:h12
 set splitbelow
 set splitright
@@ -86,4 +91,16 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 
 set completeopt=menu,menuone,noselect
 
+function! CheckBackSpace() abort
+let col = col('.') - 1
+return !col || getline('.')[col - 1]  =~ '\s'
+endfunction
 
+" Insert <tab> when previous text is space, refresh completion if not.
+inoremap <silent><expr> <TAB>
+\ coc#pum#visible() ? coc#pum#next(1):
+\ CheckBackSpace() ? "\<Tab>" :
+\ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+colorscheme tokyonight
