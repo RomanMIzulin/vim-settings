@@ -4,14 +4,13 @@ Plug 'nvie/vim-flake8'
 Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive' 
 Plug 'psf/black', { 'branch': 'stable' }
 Plug 'vim-airline/vim-airline'
 Plug 'mhinz/vim-startify'
 Plug 'wbthomason/packer.nvim'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'saadparwaiz1/cmp_luasnip'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'aserowy/tmux.nvim'
@@ -51,7 +50,7 @@ set shortmess+=c
 			
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=300
+set updatetime=400
 
 
 if has("nvim-0.5.0") || has("patch-8.1.1564")
@@ -84,7 +83,8 @@ endif
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+inoremap <silent><expr> <cr> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 autocmd CursorHold * silent call CocActionAsync('highlight')
