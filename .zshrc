@@ -1,14 +1,15 @@
+source ~/zsh_plugins/zsh-snap/znap.zsh
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
-
+export ZSH="$HOME/.oh-my-zsh"
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="spaceship"
+ZSH_THEME="eastwood"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -70,9 +71,15 @@ ZSH_THEME="spaceship"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git extract web-search yum git-extras docker vagrant zsh-docker-aliases zsh-autosuggestions
-	 copydir history jsontools docker-compose 
-	 zsh-autocomplete
+plugins=(git zsh-syntax-highlighting colorize
+  colored-man-pages
+  fasd
+    zsh-autosuggestions
+    web-search
+    docker docker-compose
+    jsontools
+    taskwarrior
+    golang
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -81,15 +88,17 @@ source $ZSH/oh-my-zsh.sh
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
+export PATH="$HOME/tools/node-v14.15.4-linux-x64/bin:$PATH"
+
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='vim'
-fi
+# if [[ -n $SSH_CONNECTION ]]; then
+export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -102,11 +111,33 @@ fi
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-#
+alias python=python3
 
-alias p3="python3"
+znap source marlonrichert/zsh-autocomplete
+function pomo() {
+    arg1=$1
+    shift
+    args="$*"
 
-autoload bashcompinit
-bashcompinit
-eval "$(register-python-argcomplete airflow)"
+    min=${arg1:?Example: pomo 15 Take a break}
+    sec=$((min * 60))
+    msg="${args:?Example: pomo 15 Take a break}"
 
+    while true; do
+        date '+%H:%M' && sleep "${sec:?}" && notify-send -u critical -t 0 -a pomo "${msg:?}"
+    done
+}
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+alias kctl='minikube kubectl'
+source <(kubectl completion zsh)
+
+eval "$(zoxide init zsh)"
+
+eval $(thefuck --alias)
+# You can use whatever you want as an alias, like for Mondays:
+eval $(thefuck --alias FUCK)
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
