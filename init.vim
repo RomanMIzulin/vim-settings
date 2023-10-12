@@ -22,10 +22,15 @@ Plug 'ruanyl/vim-gh-line'
 Plug 'justinmk/vim-sneak'
 
 
-"Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
+Plug 'folke/tokyonight.nvim', { 'branch': 'main' }
 Plug 'navarasu/onedark.nvim'
+
 " Inside the Vim-Plug block on your .vimrc
 Plug 'ekalinin/Dockerfile.vim'
+
+" DEBUGGER
+Plug 'mfussenegger/nvim-dap'
+Plug 'mfussenegger/nvim-dap-python'
 
 
 call plug#end()
@@ -36,7 +41,7 @@ let g:pymode_options_max_line_length = 120
 let mapleader=" "
 set mouse=a
 nnoremap <SPACE> <Nop>
-nnoremap <leader>ff :Telescope find_files<CR>
+nnoremap <leader>ff :Telescope find_files hidden=true<CR>
 nnoremap <leader>fg :Telescope live_grep<CR>
 nnoremap <leader>jd :YcmCompleter GoTo<CR>
 nnoremap <leader>s :vsp<CR>
@@ -93,8 +98,9 @@ endif
 
 " Make <CR> auto-select the first completion item and notify coc.nvim to
 " format on enter, <cr> could be remapped by other vim plugin
-inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm()
-				\: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+"inoremap <silent><expr> <CR> coc#pum#visible() ? coc#_select_confirm()
+"				\: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
@@ -117,3 +123,30 @@ colorscheme onedark
 map f <Plug>Sneak_s
 map F <Plug>Sneak_S 
 noremap <F6> :Black<CR>
+
+let g:neovide_transparency = 0.98
+set scrolloff=10
+lua << EOF
+require('dap-python').setup('~/findocs_back/.virtualenvs/debugpy/bin/python')
+require('telescope').setup{
+  defaults = {
+    vimgrep_arguments = {
+      'rg',
+      '--no-heading',
+      '--with-filename',
+      '--line-number',
+      '--column',
+      '--smart-case',
+      '--hidden',
+      '--no-ignore-vcs'
+    },
+}
+  }
+vim.keymap.set('n', '<F5>', function() require('dap').continue() end)
+vim.keymap.set('n', '<F10>', function() require('dap').step_over() end)
+vim.keymap.set('n', '<F11>', function() require('dap').step_into() end)
+vim.keymap.set('n', '<F12>', function() require('dap').step_out() end)
+vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() end)
+vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
+vim.keymap.set('n', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
+EOF
