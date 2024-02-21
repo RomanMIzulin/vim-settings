@@ -71,15 +71,20 @@ ZSH_THEME="eastwood"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-syntax-highlighting colorize
-  colored-man-pages
-  fasd
-    zsh-autosuggestions
-    web-search
-    docker docker-compose
-    jsontools
-    taskwarrior
-    golang
+plugins=(git
+zsh-syntax-highlighting
+colorize
+colored-man-pages
+fasd
+zsh-autosuggestions
+web-search
+docker docker-compose
+jsontools
+taskwarrior
+golang
+pyenv
+python
+virtualenv
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -89,13 +94,14 @@ source $ZSH/oh-my-zsh.sh
 # export MANPATH="/usr/local/man:$MANPATH"
 
 export PATH="$HOME/tools/node-v14.15.4-linux-x64/bin:$PATH"
+export PATH="$HOME/neovim:$PATH"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
-export EDITOR='vim'
+export EDITOR='nvim'
 # else
 #   export EDITOR='mvim'
 # fi
@@ -136,8 +142,14 @@ source <(kubectl completion zsh)
 
 eval "$(zoxide init zsh)"
 
-eval $(thefuck --alias)
-# You can use whatever you want as an alias, like for Mondays:
-eval $(thefuck --alias FUCK)
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+alias swagger='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
+alias gs='git status'
+alias n='nvim'
+
+eval "$(logcli --completion-script-zsh)"
+alias tgo='/home/linuxbrew/.linuxbrew/bin/task'
+export PATH=$PATH:/usr/local/go/bin
+KEYTIMEOUT=1000

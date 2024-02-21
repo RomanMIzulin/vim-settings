@@ -32,10 +32,14 @@ Plug 'ekalinin/Dockerfile.vim'
 Plug 'mfussenegger/nvim-dap'
 Plug 'mfussenegger/nvim-dap-python'
 
+" colorscheme theme
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+Plug 'morhetz/gruvbox'
 
 call plug#end()
 
 let g:black_linelength = 120
+let g:black_target_version = "py310"
 let g:neomake_python_enabled_makers = ['pylint']
 let g:pymode_options_max_line_length = 120
 let mapleader=" "
@@ -104,6 +108,12 @@ inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
+augroup fmt
+  autocmd!
+  autocmd BufWritePre *.py execute ':Black'
+augroup END
+
+
 set completeopt=menu,menuone,noselect
 
 function! CheckBackSpace() abort
@@ -118,13 +128,16 @@ inoremap <silent><expr> <TAB>
 \ coc#refresh()
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
-colorscheme onedark
+"colorscheme onedark
+colorscheme gruvbox
 
 map f <Plug>Sneak_s
 map F <Plug>Sneak_S 
 noremap <F6> :Black<CR>
 
 let g:neovide_transparency = 0.98
+let g:neovide_scale_factor = 0.85
+
 set scrolloff=10
 lua << EOF
 require('dap-python').setup('~/findocs_back/.virtualenvs/debugpy/bin/python')
@@ -138,7 +151,10 @@ require('telescope').setup{
       '--column',
       '--smart-case',
       '--hidden',
-      '--no-ignore-vcs'
+      --'--no-ignore-vcs' -- wtf is this
+      '--glob', '!**/.cache/*',  -- Ignore .cache directory
+      '--glob', '!**/__pycache__/*',  -- Ignore .cache directory
+      '--glob', '!**/*.pyc',  -- Ignore .pyc files
     },
 }
   }
@@ -150,3 +166,4 @@ vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() e
 vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
 vim.keymap.set('n', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
 EOF
+
