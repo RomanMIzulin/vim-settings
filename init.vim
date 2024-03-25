@@ -129,6 +129,7 @@ inoremap <silent><expr> <TAB>
 inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
 "colorscheme onedark
+set background=light
 colorscheme gruvbox
 
 map f <Plug>Sneak_s
@@ -137,6 +138,8 @@ noremap <F6> :Black<CR>
 
 let g:neovide_transparency = 0.98
 let g:neovide_scale_factor = 0.85
+setlocal foldmethod=indent
+set foldlevel=99
 
 set scrolloff=10
 lua << EOF
@@ -166,4 +169,5 @@ vim.keymap.set('n', '<Leader>b', function() require('dap').toggle_breakpoint() e
 vim.keymap.set('n', '<Leader>B', function() require('dap').set_breakpoint() end)
 vim.keymap.set('n', '<Leader>lp', function() require('dap').set_breakpoint(nil, nil, vim.fn.input('Log point message: ')) end)
 EOF
+
 
