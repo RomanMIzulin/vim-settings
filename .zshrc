@@ -80,11 +80,12 @@ zsh-autosuggestions
 web-search
 docker docker-compose
 jsontools
-taskwarrior
+#taskwarrior
 golang
 pyenv
 python
 virtualenv
+poetry
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -149,7 +150,20 @@ alias swagger='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env 
 alias gs='git status'
 alias n='nvim'
 
-eval "$(logcli --completion-script-zsh)"
-alias tgo='/home/linuxbrew/.linuxbrew/bin/task'
+alias tk='/home/linuxbrew/.linuxbrew/bin/task'
+alias t='/usr/bin/task'
+alias task='/usr/bin/task'
+alias tw='taskwarrior-tui'
 export PATH=$PATH:/usr/local/go/bin
 KEYTIMEOUT=1000
+autoload -U compinit
+compinit -i
+
+eval "$(atuin init zsh)"
+alias ci='glab ci view'
+
+export NVM_DIR="$HOME/.config/nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+eval "$(logcli --completion-script-zsh)"
+alias recent_branches='gb -l --sort committerdate --no-merged | tail'
