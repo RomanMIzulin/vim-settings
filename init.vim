@@ -55,6 +55,10 @@ nnoremap <leader>D <Plug>(coc-type-definition)
 nnoremap <leader>rn <Plug>(coc-rename)
 nnoremap <leader>rr <Plug>(coc-references)
 nnoremap <leader>bl :ToggleBlameLine<CR>
+nnoremap <C-n> :cnext<CR>
+
+let g:python3_host_prog = 'python3'
+
 set guifont=FiraCode\ NF:h12
 set splitbelow
 set splitright
@@ -110,7 +114,7 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 
 augroup fmt
   autocmd!
-  autocmd BufWritePre *.py execute ':Black'
+  "autocmd BufWritePre *.py execute ':Black'
 augroup END
 
 
@@ -158,6 +162,7 @@ require('telescope').setup{
       '--glob', '!**/.cache/*',  -- Ignore .cache directory
       '--glob', '!**/__pycache__/*',  -- Ignore .cache directory
       '--glob', '!**/*.pyc',  -- Ignore .pyc files
+      '--glob', '!.git/*', -- Ignore .git directory
     },
 }
   }
