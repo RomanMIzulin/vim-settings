@@ -1,3 +1,4 @@
+
 return {
 
   -- Telescope for fuzzy finding
@@ -5,6 +6,19 @@ return {
     'nvim-telescope/telescope.nvim',
     requires = { {'nvim-lua/plenary.nvim'} }
   },
+  -- get link to code at gitlab or github
+'ruanyl/vim-gh-line',
+
+'github/copilot.vim',
+
+  --monokai theme
+  'loctvl842/monokai-pro.nvim',
+  {
+  "folke/tokyonight.nvim",
+  lazy = false,
+  priority = 1000,
+  opts = {},
+},
 
   -- CHADtree
    {'ms-jpq/chadtree', branch= 'chad', build= 'python3 -m chadtree deps'},
@@ -55,7 +69,7 @@ return {
 
     -- lua & third party sources -- See https://github.com/ms-jpq/coq.thirdparty
     -- Need to **configure separately**
-    { 'ms-jpq/coq.thirdparty', branch = "3p" }
+{ 'ms-jpq/coq.thirdparty', branch = "3p" }
     -- - shell repl
     -- - nvim lua api
     -- - scientific calculator
