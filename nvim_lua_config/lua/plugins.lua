@@ -8,6 +8,7 @@ return {
   },
   -- get link to code at gitlab or github
 'ruanyl/vim-gh-line',
+'j-morano/buffer_manager.nvim',
 
 'github/copilot.vim',
 
@@ -78,9 +79,20 @@ return {
   },
   init = function()
     vim.g.coq_settings = {
-        auto_start = true, -- if you want to start COQ at startup
+        auto_start = 'shut-up', -- if you want to start COQ at startup
         -- Your COQ settings here
-    }
+	--
+	completion={always = false},
+        keymap = {
+	    manual_complete = '<C-Space>', -- You can change this keybinding
+	  },
+        clients = {
+	    third_party = {
+	      enabled = true,
+	      always_wait = true
+	    }
+	  }
+	    }
   end,
   config = function()
     -- Your LSP settings here
