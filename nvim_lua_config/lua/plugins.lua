@@ -10,7 +10,13 @@ return {
 'ruanyl/vim-gh-line',
 'j-morano/buffer_manager.nvim',
 
+{
 'github/copilot.vim',
+        vim.keymap.set('i', '<Tab>', 'copilot#Accept("\\<CR>")', {
+          expr = true,
+          replace_keycodes = false
+        })
+},
 
   --monokai theme
   'loctvl842/monokai-pro.nvim',
@@ -83,13 +89,10 @@ return {
         -- Your COQ settings here
 	--
 	completion={always = false},
-        keymap = {
-	    manual_complete = '<C-Space>', -- You can change this keybinding
-	  },
         clients = {
 	    third_party = {
 	      enabled = true,
-	      always_wait = true
+	      --always_wait = true
 	    }
 	  }
 	    }
