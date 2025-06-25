@@ -1,0 +1,88 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "show_edit_predictions": true,
+  "features": {
+    "edit_prediction_provider": "zed"
+  },
+  "agent": {
+    "default_profile": "minimal",
+    "default_model": {
+      "provider": "google",
+      "model": "gemini-2.5-flash"
+    },
+    "version": "2"
+  },
+  "telemetry": {
+    "metrics": false
+  },
+  "ui_font_weight": 300,
+  "ui_font_family": "Hack Nerd Font Mono",
+  "ui_font_fallbacks": ["Zed Plex Mono"],
+  "buffer_font_family": "Zed Plex Mono",
+  "vim_mode": true,
+  "ui_font_size": 18,
+  "buffer_font_size": 16.0,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "One Dark"
+  },
+  "terminal": {
+    "shell": { "program": "/bin/zsh" }
+  },
+
+  "languages": {
+    "Python": {
+      "language_servers": ["pyright", "pylsp"]
+    }
+  },
+  "lsp": {
+    "pylsp": {
+      "settings": {
+        "plugins": {
+          "autopep8": {
+            "enabled": false
+          },
+          "pycodestyle": {
+            "maxLineLength": 120
+          }
+        }
+      }
+    },
+    "pyflakes": {},
+    "pyright": {
+      "binary": {
+        "path": "/home/rmatveev/.local/bin/pyright"
+      },
+      "settings": {
+        "python.analysis": {
+          "diagnosticMode": "openFilesOnly",
+          "typeCheckingMode": "strict"
+        },
+        "python": {
+          "pythonPath": ".venv/bin/python"
+        }
+      }
+    }
+  },
+  "file_scan_exclusions": [
+    "**/.git",
+    "**/.svn",
+    "**/.hg",
+    "**/CVS",
+    "**/.DS_Store",
+    "**/Thumbs.db",
+    "**/.classpath",
+    "**/.settings",
+    "**/__cache__",
+    "**/__pychache__",
+    "**/.mypy_cache"
+  ]
+}
