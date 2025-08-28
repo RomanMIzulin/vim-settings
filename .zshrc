@@ -1,6 +1,6 @@
-source ~/zsh_plugins/zsh-snap/znap.zsh
+# If you come from bash you might have to change your $Psource ~/zsh_plugins/zsh-snap/znap.zsh
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -80,7 +80,6 @@ zsh-autosuggestions
 web-search
 docker docker-compose
 jsontools
-#taskwarrior
 golang
 pyenv
 python
@@ -94,8 +93,8 @@ source $ZSH/oh-my-zsh.sh
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
-export PATH="$HOME/tools/node-v14.15.4-linux-x64/bin:$PATH"
 export PATH="$HOME/neovim:$PATH"
+export PATH="$HOME/go/bin:$PATH"
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -120,7 +119,6 @@ export EDITOR='nvim'
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias python=python3
 
-znap source marlonrichert/zsh-autocomplete
 function pomo() {
     arg1=$1
     shift
@@ -136,13 +134,8 @@ function pomo() {
 }
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-
-alias kctl='minikube kubectl'
-source <(kubectl completion zsh)
 
 eval "$(zoxide init zsh)"
-
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -150,9 +143,7 @@ alias swagger='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env 
 alias gs='git status'
 alias n='nvim'
 
-alias tk='/home/linuxbrew/.linuxbrew/bin/task'
 alias t='/usr/bin/task'
-alias task='/usr/bin/task'
 alias tw='taskwarrior-tui'
 export PATH=$PATH:/usr/local/go/bin
 KEYTIMEOUT=1000
@@ -165,5 +156,46 @@ alias ci='glab ci view'
 export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-eval "$(logcli --completion-script-zsh)"
 alias recent_branches='gb -l --sort committerdate --no-merged | tail'
+
+. "$HOME/.cargo/env"
+
+
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+source /home/linuxbrew/.linuxbrew/share/zsh-abbr/zsh-abbr.zsh
+
+if type brew &>/dev/null; then
+	FPATH=$(brew --prefix)/share/zsh-abbr:$FPATH
+
+	autoload -Uz compinit
+	compinit
+fi
+
+
+# bun completions
+[ -s "/home/rmatveev/.bun/_bun" ] && source "/home/rmatveev/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+source /usr/share/nvm/init-nvm.sh
+
+# pnpm
+export PNPM_HOME="/home/rmatveev/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+
+lfcd () {
+    # `command` is needed in case `lfcd` is aliased to `lf`
+    cd "$(command lf -print-last-dir "$@")"
+}
+
+eval "$(uv generate-shell-completion zsh)"
+
+alias ls='eza -l'
+
+eval "$(starship init zsh)"
