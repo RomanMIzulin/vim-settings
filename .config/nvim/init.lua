@@ -5,6 +5,9 @@ require("lazy").setup("plugins")
 
 -- END OF INSTALLs HERE ---------------------
 
+
+require("oil").setup()
+
 -- LSP config with Pyright
 require('lspconfig')['pyright'].setup{
 	on_attach = function(client, bufnr)
@@ -26,9 +29,13 @@ require('lspconfig')['pyright'].setup{
 --		}
 --	}
 --
-end
-
+	end
 }
+
+vim.keymap.set('n', '<leader>b', function()
+    require("buffer_manager.ui").toggle_quick_menu()
+end, { desc = 'Buffer Manager' })
+
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all" (the listed parsers MUST always be installed)
   ensure_installed = { "python","gleam","elixir", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
@@ -78,27 +85,6 @@ null_ls.setup({
     },
 })
 
---[[ nvim-cmp setup for autocompletion
-local cmp = require'cmp'
-cmp.setup({
-    snippet = {
-        expand = function(args)
-            require('luasnip').lsp_expand(args.body)
-        end,
-    },
-    mapping = cmp.mapping.preset.insert({
-        ['<Tab>'] = cmp.mapping.select_next_item(),
-        ['<S-Tab>'] = cmp.mapping.select_prev_item(),
-    }),
-    sources = cmp.config.sources({
-        { name = 'nvim_lsp' },
-        { name = 'luasnip' },
-    }, {
-        { name = 'buffer' },
-    })
-})
---]]
-
 -- Telescope configuration remains largely unchanged from the Vimscript example
 require('telescope').setup{
   defaults = {
@@ -138,7 +124,6 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 ------------ KEYMAPS ---------
--- Optional: Set up key mappings for folding
 vim.g.mapleader = " "  -- Setting leader key
 
 -- folding
@@ -157,41 +142,47 @@ vim.api.nvim_set_keymap('n', '<leader>fg', '<cmd>Telescope live_grep<CR>', {nore
 vim.keymap.set('n', '<leader>v', '<cmd>CHADopen<CR>', {noremap = true, silent = true})
 vim.keymap.set('n', '<leader>s', '<cmd>vertical split<CR>', {noremap = true, silent = true})
 vim.keymap.set('n', '<leader>t', '<cmd>vertical terminal<CR>', {noremap = true, silent = true})
+vim.keymap.set('n', '<leader>e',  vim.diagnostic.open_float, {noremap = true, silent = true})
+-- Toggle all diagnostics
+vim.keymap.set('n', '<leader>Td', function()
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = 'Toggle diagnostics' })
 
--- snippets
-local ls = require("luasnip")
-vim.keymap.set({"i"}, "<C-K>", function() ls.expand() end, {silent = true})
-vim.keymap.set({"i", "s"}, "<C-L>", function() ls.jump( 1) end, {silent = false})
-vim.keymap.set({"i", "s"}, "<C-J>", function() ls.jump(-1) end, {silent = true})
+local keycode = vim.keycode or function(x)
+return vim.api.nvim_replace_termcodes(x, true, true, true)
+end
+local keys = {
+['cr']        = keycode('<CR>'),
+['ctrl-y']    = keycode('<C-y>'),
+['ctrl-y_cr'] = keycode('<C-y><CR>'),
+}
 
-vim.keymap.set({"i", "s"}, "<C-E>", function()
-	if ls.choice_active() then
-		ls.change_choice(1)
-	end
-end, {silent = true})
--- end snippets
+_G.cr_action = function()
+if vim.fn.pumvisible() ~= 0 then
+-- If popup is visible, confirm selected item or add new line otherwise
+local item_selected = vim.fn.complete_info()['selected'] ~= -1
+return item_selected and keys['ctrl-y'] or keys['ctrl-y_cr']
+else
+-- If popup is not visible, use plain `<CR>`. You might want to customize
+-- according to other plugins. For example, to use 'mini.pairs', replace
+-- next line with `return require('mini.pairs').cr()`
+return keys['cr']
+end
+end
+
+vim.keymap.set('i', '<CR>', 'v:lua._G.cr_action()', { expr = true })
 
 
-
-
-				
 
 vim.cmd [[
 set background=dark
 colorscheme monokai-pro
 hi Comment guifg=Yellow
 " Set recommended to false
-let g:coq_settings = { "keymap.recommended": v:false }
+"let g:coq_settings = { "keymap.recommended": v:false, "auto_start":v:false }
 
-" Keybindings
-" 🐓 Coq completion settings
-ino <silent><expr> <Esc>   pumvisible() ? "\<C-e><Esc>" : "\<Esc>"
-ino <silent><expr> <C-c>   pumvisible() ? "\<C-e><C-c>" : "\<C-c>"
-ino <silent><expr> <BS>    pumvisible() ? "\<C-e><BS>"  : "\<BS>"
-ino <silent><expr> <CR>    pumvisible() ? (complete_info().selected == -1 ? "\<C-e><CR>" : "\<C-y>") : "\<CR>"
-ino <silent><expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-ino <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<BS>"
 ]]
 
 
+require('leap').set_default_mappings()
 
