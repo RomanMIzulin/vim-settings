@@ -77,14 +77,13 @@ colorize
 colored-man-pages
 fasd
 zsh-autosuggestions
-web-search
 docker docker-compose
 jsontools
 golang
 pyenv
 python
 virtualenv
-poetry
+
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -118,20 +117,9 @@ export EDITOR='nvim'
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias python=python3
+alias p=python3
 
-function pomo() {
-    arg1=$1
-    shift
-    args="$*"
 
-    min=${arg1:?Example: pomo 15 Take a break}
-    sec=$((min * 60))
-    msg="${args:?Example: pomo 15 Take a break}"
-
-    while true; do
-        date '+%H:%M' && sleep "${sec:?}" && notify-send -u critical -t 0 -a pomo "${msg:?}"
-    done
-}
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 
@@ -139,12 +127,9 @@ eval "$(zoxide init zsh)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-alias swagger='docker run --rm -it  --user $(id -u):$(id -g) -e GOPATH=$(go env GOPATH):/go -v $HOME:$HOME -w $(pwd) quay.io/goswagger/swagger'
 alias gs='git status'
 alias n='nvim'
 
-alias t='/usr/bin/task'
-alias tw='taskwarrior-tui'
 export PATH=$PATH:/usr/local/go/bin
 KEYTIMEOUT=1000
 autoload -U compinit
@@ -189,13 +174,12 @@ esac
 # pnpm end
 
 
-lfcd () {
-    # `command` is needed in case `lfcd` is aliased to `lf`
-    cd "$(command lf -print-last-dir "$@")"
-}
-
 eval "$(uv generate-shell-completion zsh)"
 
 alias ls='eza -l'
+alias y='yazi'
 
 eval "$(starship init zsh)"
+source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+
+alias claude="/home/rmatveev/.claude/local/claude"

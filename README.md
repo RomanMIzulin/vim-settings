@@ -1,5 +1,13 @@
 # vim-settings
-configs, plugins, etc. for my nvim, zsh
 
+Configs, plugins, etc. for:
+- nvim
+- zsh
+- zed
+- allacrity
+- vscode?
+- 
 
-My simple config and pack of plugins for vim 
+## what changed
+
+- removed tmux, switched to zellij

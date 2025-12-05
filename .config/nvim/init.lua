@@ -144,6 +144,29 @@ vim.keymap.set("n", "zM", "zM", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>ff", "<cmd>Telescope find_files hidden=true<CR>", { desc = "find files", noremap = true })
 vim.keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<CR>", { desc = "live grep", noremap = true })
 
+--neovide
+if vim.g.neovide then
+  vim.keymap.set('n', '<D-s>', ':w<CR>') -- Save
+  vim.keymap.set('v', '<C-S-c>', '"+y') -- Copy
+  vim.keymap.set('n', '<C-S-v>', '"+P') -- Paste normal mode
+  vim.keymap.set('v', '<C-S-v>', '"+P') -- Paste visual mode
+  vim.keymap.set('c', '<C-S-v>', '<C-R>+') -- Paste command mode
+  vim.keymap.set('i', '<C-S-v>', '<ESC>l"+Pli') -- Paste insert mode
+	vim.g.clipboard = {
+	  name = 'xsel',
+	  copy = {
+	    ['+'] = '/home/linuxbrew/.linuxbrew/bin/xsel --clipboard --input',
+	    ['*'] = '/home/linuxbrew/.linuxbrew/bin/xsel --primary --input',
+	  },
+	  paste = {
+	    ['+'] = '/home/linuxbrew/.linuxbrew/bin/xsel --clipboard --output',
+	    ['*'] = '/home/linuxbrew/.linuxbrew/bin/xsel --primary --output',
+	  },
+	}
+end
+vim.opt.clipboard = 'unnamedplus'
+
+
 -- Oil
 vim.keymap.set(
 	"n",
