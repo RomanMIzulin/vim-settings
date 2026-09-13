@@ -3,6 +3,7 @@
 export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
+FPATH=/home/linuxbrew/.linuxbrew/share/zsh-abbr:$FPATH
 export ZSH="$HOME/.oh-my-zsh"
 export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 # Set name of the theme to load --- if set to "random", it will
@@ -132,15 +133,10 @@ alias n='nvim'
 
 export PATH=$PATH:/usr/local/go/bin
 KEYTIMEOUT=1000
-autoload -U compinit
-compinit -i
 
 eval "$(atuin init zsh)"
 alias ci='glab ci view'
 
-export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 alias recent_branches='gb -l --sort committerdate --no-merged | tail'
 
 . "$HOME/.cargo/env"
@@ -148,13 +144,6 @@ alias recent_branches='gb -l --sort committerdate --no-merged | tail'
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 source /home/linuxbrew/.linuxbrew/share/zsh-abbr/zsh-abbr.zsh
-
-if type brew &>/dev/null; then
-	FPATH=$(brew --prefix)/share/zsh-abbr:$FPATH
-
-	autoload -Uz compinit
-	compinit
-fi
 
 
 # bun completions
@@ -177,9 +166,77 @@ esac
 eval "$(uv generate-shell-completion zsh)"
 
 alias ls='eza -l'
-alias y='yazi'
 
 eval "$(starship init zsh)"
 source /usr/share/zsh/plugins/zsh-vi-mode/zsh-vi-mode.plugin.zsh
 
-alias claude="/home/rmatveev/.claude/local/claude"
+
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
+
+alias tc-slow='sudo tc qdisc replace dev wlp0s20f3 root netem delay 700ms 200ms rate 2mbit'
+alias tc-pain='sudo tc qdisc replace dev wlp0s20f3 root netem delay 1000ms 300ms rate 500kbit'
+alias tc-hell='sudo tc qdisc replace dev wlp0s20f3 root netem delay 2000ms 500ms rate 50kbit'
+alias tc-free='sudo tc qdisc del dev wlp0s20f3 root 2>/dev/null && echo "traffic restored"'
+
+# Claude Code modes
+alias cc='claude --model sonnet --effort high'
+alias ccc='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude --model opus --effort max'
+
+# docs-mcp-server: use system chromium (bundled headless-shell SIGSEGVs on Manjaro/glibc 2.43)
+export PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium
+
+# work account: separate config dir => separate login, settings, history
+alias ccw='CLAUDE_CONFIG_DIR=$HOME/.claude-work claude --model opus --effort max'
+
+# gst — multi-repo git status across a symlink workspace.
+# At a workspace root (not itself a repo) it scans immediate child dirs,
+# resolves symlinks, drops nested dupes (e.g. sky_ledger lives inside
+# findocs_ba, so the repo is shown once), and prints git status for each.
+# Inside a single repo it's just `git status`. Flags pass through, so
+# `gst -sb` works; bare `gst` in multi-repo mode defaults to `-sb`.
+# Overrides oh-my-zsh's `alias gst='git status'`.
+unalias gst 2>/dev/null
+gst() {
+	emulate -L zsh
+	local -a cands keep args
+	local name real i j r rc=0
+
+	# Inside a repo already -> behave like the original gst.
+	if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+		git status "$@"
+		return $?
+	fi
+
+	# Gather immediate children that are git repos (symlinks resolved).
+	for name in *; do
+		[[ -d "$name" ]] || continue
+		real="${name:A}"
+		git -C "$real" rev-parse --git-dir >/dev/null 2>&1 || continue
+		cands+=("$real")
+	done
+	(( ${#cands[@]} )) || { git status "$@"; return $?; }
+
+	# Drop repos nested inside another candidate (sky_ledger ⊂ findocs_ba).
+	for i in "$cands[@]"; do
+		for j in "$cands[@]"; do
+			[[ "$i" != "$j" ]] && [[ "${i#${j}/}" != "$i" ]] && continue 2
+		done
+		keep+=("$i")
+	done
+
+	args=("$@")
+	(( ${#args[@]} )) || args=(-sb)   # compact overview by default
+
+	for r in "$keep[@]"; do
+		print -P "%F{cyan}══ $r:%f"
+		git -C "$r" status "$args[@]" || rc=$?
+		echo
+	done
+	return $rc
+}
